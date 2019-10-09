@@ -1,0 +1,10 @@
+/.vs
+/Demo/Debug
+/Demo/x64
+/Demo/*.aps
+/DllInject/*
+/DllInject/*.aps
+/dll/x64
+/dll/Debug
+/x64
+/Debug

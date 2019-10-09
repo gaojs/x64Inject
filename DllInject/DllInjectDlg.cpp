@@ -23,13 +23,16 @@ BOOL AllowMeesageForVistaAbove(UINT uMessage,BOOL bAllow)
 	{       
 		return FALSE;
 	}
-	_ChangeWindowMessageFilter pChangeWindowMessageFilter = (_ChangeWindowMessageFilter)GetProcAddress(hUserMod, "ChangeWindowMessageFilter");
+	_ChangeWindowMessageFilter pChangeWindowMessageFilter 
+		= (_ChangeWindowMessageFilter)GetProcAddress(hUserMod, 
+			"ChangeWindowMessageFilter");
 	if (NULL == pChangeWindowMessageFilter)
 	{       
 		FreeLibrary(hUserMod);
 		return FALSE;
 	}
-	BOOL bResult = pChangeWindowMessageFilter(uMessage, bAllow ? 1 : 2); // 1-MSGFLT_ADD, 2-MSGFLT_REMOVE
+	// 1-MSGFLT_ADD, 2-MSGFLT_REMOVE
+	BOOL bResult = pChangeWindowMessageFilter(uMessage, bAllow ? 1 : 2); 
 	if(NULL != hUserMod)
 	{
 		FreeLibrary(hUserMod);
