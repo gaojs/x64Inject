@@ -87,7 +87,7 @@ BOOL CDllInjectDlg::OnInitDialog()
 	AllowMeesageForVistaAbove(WM_DROPFILES,TRUE);
 	AllowMeesageForVistaAbove(0x0049, TRUE ); // 0x0049 - WM_COPYGLOBALDATA
 
-	CString strPath = L"C:\\Windows\\System32\\sfc.dll";
+	CString strPath = L"..\\Debug\\dll.dll";
 	SetDlgItemText(IDC_EDT_DLLPATH,strPath);
 
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
@@ -200,7 +200,7 @@ void CDllInjectDlg::OnDropFiles(HDROP hDropInfo)
 UINT CDllInjectDlg::ThreadProc(LPVOID lpVoid)
 {
 	Cx64Inject inject;
-	if (inject.InjectDll(g_dwPID,g_szDllPath))
+	if (inject.InjectDll(g_dwPID, g_szDllPath))
 	{
 		::MessageBox(NULL,L"注入成功",L":)",MB_ICONINFORMATION);
 	}

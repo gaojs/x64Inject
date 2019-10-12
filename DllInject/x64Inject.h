@@ -2,7 +2,6 @@
 #include <windows.h>
 #include <winternl.h> 
 #include "MyOutputDebugString.h"
-//Native DLL L"C:\\Windows\\System32\\sfc.dll";
 
 typedef struct _LSA_UNICODE_STRING{
 	USHORT Length;
