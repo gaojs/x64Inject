@@ -157,7 +157,7 @@ void CDllInjectDlg::OnBnClickedBtnInject()
 	}
 	g_dwPID = dwPID;
 	memcpy(g_szDllPath,szDLLPath,MAX_PATH*sizeof(WCHAR));
-	AfxBeginThread(ThreadProc,this);
+	AfxBeginThread(ThreadProcedue,this);
 	pBtnInject = GetDlgItem(IDC_BTN_INJECT);
 	pBtnInject->EnableWindow(FALSE);
 }
@@ -197,7 +197,7 @@ void CDllInjectDlg::OnDropFiles(HDROP hDropInfo)
 }
 
 
-UINT CDllInjectDlg::ThreadProc(LPVOID lpVoid)
+UINT CDllInjectDlg::ThreadProcedue(LPVOID lpVoid)
 {
 	Cx64Inject inject;
 	if (inject.InjectDll(g_dwPID, g_szDllPath))

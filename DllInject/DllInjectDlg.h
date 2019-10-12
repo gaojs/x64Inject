@@ -32,6 +32,6 @@ public:
 	afx_msg void OnBnClickedBtnInject();
 	afx_msg void OnBnClickedBtnBrowse();
 	afx_msg void OnDropFiles(HDROP hDropInfo);
-	static UINT ThreadProc(LPVOID lpVoid);
+	static UINT ThreadProcedue(LPVOID lpVoid);
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 };
