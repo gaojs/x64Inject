@@ -1,7 +1,4 @@
-
 // DllInject.cpp : 定义应用程序的类行为。
-//
-
 #include "stdafx.h"
 #include "DllInject.h"
 #include "DllInjectDlg.h"
@@ -10,16 +7,12 @@
 #define new DEBUG_NEW
 #endif
 
-
 // CDllInjectApp
-
 BEGIN_MESSAGE_MAP(CDllInjectApp, CWinApp)
 	ON_COMMAND(ID_HELP, &CWinApp::OnHelp)
 END_MESSAGE_MAP()
 
-
 // CDllInjectApp 构造
-
 CDllInjectApp::CDllInjectApp()
 {
 	// 支持重新启动管理器
@@ -29,14 +22,10 @@ CDllInjectApp::CDllInjectApp()
 	// 将所有重要的初始化放置在 InitInstance 中
 }
 
-
 // 唯一的一个 CDllInjectApp 对象
-
 CDllInjectApp theApp;
 
-
 // CDllInjectApp 初始化
-
 BOOL CDllInjectApp::InitInstance()
 {
 	// 如果一个运行在 Windows XP 上的应用程序清单指定要
@@ -50,7 +39,6 @@ BOOL CDllInjectApp::InitInstance()
 	InitCommonControlsEx(&InitCtrls);
 
 	CWinApp::InitInstance();
-
 
 	// 创建 shell 管理器，以防对话框包含
 	// 任何 shell 树视图控件或 shell 列表视图控件。

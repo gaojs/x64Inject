@@ -1,12 +1,8 @@
-
 // DllInjectDlg.cpp : 实现文件
-//
-
 #include "stdafx.h"
 #include "DllInject.h"
 #include "DllInjectDlg.h"
 #include "afxdialogex.h"
-
 #include "x64Inject.h"
 #include <shlwapi.h>
 #pragma comment (lib, "shlwapi.lib")
@@ -40,17 +36,11 @@ BOOL AllowMeesageForVistaAbove(UINT uMessage,BOOL bAllow)
 	return bResult;
 }
 
-
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
 
-
 // CDllInjectDlg 对话框
-
-
-
-
 CDllInjectDlg::CDllInjectDlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(CDllInjectDlg::IDD, pParent)
 {
@@ -70,9 +60,7 @@ BEGIN_MESSAGE_MAP(CDllInjectDlg, CDialogEx)
 	ON_WM_DROPFILES()
 END_MESSAGE_MAP()
 
-
 // CDllInjectDlg 消息处理程序
-
 BOOL CDllInjectDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
@@ -87,7 +75,7 @@ BOOL CDllInjectDlg::OnInitDialog()
 	AllowMeesageForVistaAbove(WM_DROPFILES,TRUE);
 	AllowMeesageForVistaAbove(0x0049, TRUE ); // 0x0049 - WM_COPYGLOBALDATA
 
-	CString strPath = L"..\\Debug\\dll.dll";
+	CString strPath = L"..\\Release\\dll.dll";
 	SetDlgItemText(IDC_EDT_DLLPATH,strPath);
 
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
@@ -96,7 +84,6 @@ BOOL CDllInjectDlg::OnInitDialog()
 // 如果向对话框添加最小化按钮，则需要下面的代码
 //  来绘制该图标。对于使用文档/视图模型的 MFC 应用程序，
 //  这将由框架自动完成。
-
 void CDllInjectDlg::OnPaint()
 {
 	if (IsIconic())
@@ -129,8 +116,6 @@ HCURSOR CDllInjectDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
-
-
 void CDllInjectDlg::OnBnClickedBtnInject()
 {
 	// TODO: 在此添加控件通知处理程序代码
@@ -162,7 +147,6 @@ void CDllInjectDlg::OnBnClickedBtnInject()
 	pBtnInject->EnableWindow(FALSE);
 }
 
-
 void CDllInjectDlg::OnBnClickedBtnBrowse()
 {
 	// TODO: 在此添加控件通知处理程序代码
@@ -173,7 +157,6 @@ void CDllInjectDlg::OnBnClickedBtnBrowse()
 		SetDlgItemText(IDC_EDT_DLLPATH,strPath);
 	}
 }
-
 
 void CDllInjectDlg::OnDropFiles(HDROP hDropInfo)
 {
@@ -196,7 +179,6 @@ void CDllInjectDlg::OnDropFiles(HDROP hDropInfo)
 	CDialogEx::OnDropFiles(hDropInfo);
 }
 
-
 UINT CDllInjectDlg::ThreadProcedue(LPVOID lpVoid)
 {
 	Cx64Inject inject;
@@ -212,14 +194,11 @@ UINT CDllInjectDlg::ThreadProcedue(LPVOID lpVoid)
 	return 0;
 }
 
-
 BOOL CDllInjectDlg::PreTranslateMessage(MSG* pMsg)
 {
-	// TODO: 在此添加专用代码和/或调用基类
 	if(pMsg->message == WM_KEYDOWN && pMsg->wParam == VK_RETURN)
 	{
 		return TRUE; 
 	}
-
 	return CDialogEx::PreTranslateMessage(pMsg);
 }

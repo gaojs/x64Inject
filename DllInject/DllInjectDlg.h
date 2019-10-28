@@ -1,9 +1,5 @@
-
 // DllInjectDlg.h : 头文件
-//
-
 #pragma once
-
 
 // CDllInjectDlg 对话框
 class CDllInjectDlg : public CDialogEx
@@ -15,9 +11,8 @@ public:
 // 对话框数据
 	enum { IDD = IDD_DLLINJECT_DIALOG };
 
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV 支持
-
 
 // 实现
 protected:

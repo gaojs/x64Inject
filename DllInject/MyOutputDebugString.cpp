@@ -6,7 +6,6 @@
 #include <stdarg.h>
 
 #pragma warning(disable:4996)
-
 #define MYPRINT
 
 //MyOutputDebugStringA("%d,%s",123,"hello");
