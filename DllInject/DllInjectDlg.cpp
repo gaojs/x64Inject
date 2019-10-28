@@ -75,7 +75,7 @@ BOOL CDllInjectDlg::OnInitDialog()
 	AllowMeesageForVistaAbove(WM_DROPFILES,TRUE);
 	AllowMeesageForVistaAbove(0x0049, TRUE ); // 0x0049 - WM_COPYGLOBALDATA
 
-	CString strPath = L"..\\Release\\dll.dll";
+	CString strPath = L"dll.dll";
 	SetDlgItemText(IDC_EDT_DLLPATH,strPath);
 
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE

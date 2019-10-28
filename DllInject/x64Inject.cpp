@@ -105,7 +105,6 @@ BOOL Cx64Inject::InjectDll(DWORD dwProcessId,LPCWSTR lpcwDllPath)
 	HANDLE hProcess = NULL, hThread = NULL;
 	LPVOID pCode = NULL;
 	LPVOID pThreadData = NULL;
-	int aa = ((int)ThreadProcEnd) - ((int)ThreadProc);
 	__try
 	{
 		if(!EnableDebugPrivilege())
@@ -139,17 +138,6 @@ BOOL Cx64Inject::InjectDll(DWORD dwProcessId,LPCWSTR lpcwDllPath)
 			__leave;
 		MyOutputDebugStringA("pThreadData = 0x%p", pThreadData);
 		//Ð´Èë´úÂë;
-		int a1 = (int)&ThreadProcEnd;
-		int a2 = (int)&ThreadProc;
-		int a3 = a1 - a2;
-		int b1 = (int)ThreadProcEnd;
-		int b2 = (int)ThreadProc;
-		int b3 = b1 - b2;
-		int c = ((int)ThreadProcEnd) - ((int)ThreadProc);
-
-		DWORD dd = ((DWORD)ThreadProcEnd) - ((DWORD)ThreadProc);
-		ULONG_PTR d = (ULONG_PTR)ThreadProcEnd - (ULONG_PTR)ThreadProc;
-		int d2 = (ULONG_PTR)ThreadProcEnd - (ULONG_PTR)ThreadProc;
 		SIZE_T SizeOfCode = (ULONG_PTR)ThreadProcEnd - (ULONG_PTR)ThreadProc;
 		pCode = VirtualAllocEx(hProcess, NULL, SizeOfCode,
 			MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
