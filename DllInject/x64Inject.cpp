@@ -1,6 +1,5 @@
 #include "x64Inject.h"
 
-
 HANDLE WINAPI ThreadProc(PTHREAD_DATA data)
 {
 	data->fnRtlInitUnicodeString(&data->UnicodeString,data->DllName);
@@ -15,11 +14,9 @@ DWORD WINAPI ThreadProcEnd()
 	return 0;
 }
 
-
 Cx64Inject::Cx64Inject(void)
 {
 }
-
 
 Cx64Inject::~Cx64Inject(void)
 {
@@ -45,17 +42,19 @@ BOOL Cx64Inject::EnableDebugPrivilege()
 	TOKEN_PRIVILEGES tkp;
 	if (!OpenProcessToken(GetCurrentProcess(),
 		TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, &hToken))   
-		return( FALSE );
+	{
+		return(FALSE);
+	}
 	LookupPrivilegeValue(NULL, SE_DEBUG_NAME, &tkp.Privileges[0].Luid);
 	tkp.PrivilegeCount = 1;   
 	tkp.Privileges[0].Attributes = SE_PRIVILEGE_ENABLED;
-	AdjustTokenPrivileges(hToken, FALSE, &tkp, 0, (PTOKEN_PRIVILEGES)NULL, 0);
-	if (GetLastError() != ERROR_SUCCESS)   
-		return FALSE;   
-
+	AdjustTokenPrivileges(hToken, FALSE, &tkp, 0, NULL, 0);
+	if (GetLastError() != ERROR_SUCCESS)
+	{
+		return FALSE;
+	}
 	return TRUE; 
 }
-
 
 //OD跟踪，发现最后调用的是NtCreateThreadEx,所以这里手动调用
 HANDLE Cx64Inject::MyCreateRemoteThread(HANDLE hProcess, 
@@ -65,15 +64,21 @@ HANDLE Cx64Inject::MyCreateRemoteThread(HANDLE hProcess,
 	FARPROC pFunc = NULL;
 	if( IsVistaOrLater())// Vista, 7, Server2008
 	{
-		pFunc = GetProcAddress(GetModuleHandleW(L"ntdll.dll"), 
-			"NtCreateThreadEx");
-		if( pFunc == NULL )
+		HMODULE hMod = GetModuleHandleW(L"ntdll.dll");
+		if (hMod == NULL)
 		{
-			MyOutputDebugStringA("MyCreateRemoteThread() : GetProcAddress(\"NtCreateThreadEx\") 调用失败！错误代码: [%d]", GetLastError());
+			MyOutputDebugStringA("MyCreateRemoteThread(): GetModuleHandleW() 调用失败！错误代码: [%d]", GetLastError());
 			return NULL;
 		}
-		((_NtCreateThreadEx64)pFunc)(&hThread,0x1FFFFF,NULL,
-			hProcess,pThreadProc,pRemoteBuf,FALSE,NULL,NULL,NULL,NULL);
+		pFunc = GetProcAddress(hMod, "NtCreateThreadEx");
+		if( pFunc == NULL )
+		{
+			MyOutputDebugStringA("MyCreateRemoteThread(): GetProcAddress(\"NtCreateThreadEx\") 调用失败！错误代码: [%d]", GetLastError());
+			return NULL;
+		}
+		((_NtCreateThreadEx64)pFunc)(&hThread, 0x1FFFFF, NULL,
+			hProcess, pThreadProc, pRemoteBuf, 
+			FALSE, NULL, NULL, NULL, NULL);
 		if( hThread == NULL )
 		{
 			MyOutputDebugStringA("MyCreateRemoteThread() : NtCreateThreadEx() 调用失败！错误代码: [%d]", GetLastError());
@@ -86,13 +91,13 @@ HANDLE Cx64Inject::MyCreateRemoteThread(HANDLE hProcess,
 			pThreadProc,pRemoteBuf,0,NULL);
 		if( hThread == NULL )
 		{
-			MyOutputDebugStringA("MyCreateRemoteThread() : CreateRemoteThread() 调用失败！错误代码: [%d]", GetLastError());
+			MyOutputDebugStringA("MyCreateRemoteThread(): CreateRemoteThread() 调用失败！错误代码: [%d]", GetLastError());
 			return NULL;
 		}
 	}
 	if( WAIT_FAILED == WaitForSingleObject(hThread, INFINITE) )
 	{
-		MyOutputDebugStringA("MyCreateRemoteThread() : WaitForSingleObject() 调用失败！错误代码: [%d]", GetLastError());
+		MyOutputDebugStringA("MyCreateRemoteThread(): WaitForSingleObject() 调用失败！错误代码: [%d]", GetLastError());
 		return NULL;
 	}
 	return hThread;
@@ -103,14 +108,14 @@ BOOL Cx64Inject::InjectDll(DWORD dwProcessId,LPCWSTR lpcwDllPath)
 {
 	BOOL bRet = FALSE;
 	HANDLE hProcess = NULL, hThread = NULL;
-	LPVOID pCode = NULL;
 	LPVOID pThreadData = NULL;
+	LPVOID pCode = NULL;
 	__try
 	{
 		if(!EnableDebugPrivilege())
 		{
 			MyOutputDebugStringA("InjectDll() : EnableDebugPrivilege() 调用失败！错误代码: [%d]", GetLastError());
-			return -1;
+			__leave;
 		}
 		//打开目标进程;
 		hProcess = OpenProcess(PROCESS_ALL_ACCESS, TRUE, dwProcessId);
@@ -121,10 +126,12 @@ BOOL Cx64Inject::InjectDll(DWORD dwProcessId,LPCWSTR lpcwDllPath)
 		//写入数据;
 		THREAD_DATA data = { 0 };
 		HMODULE hNtdll = GetModuleHandleW(L"ntdll.dll");
+		if (hNtdll == NULL)
+			__leave;
 		data.fnRtlInitUnicodeString = (pRtlInitUnicodeString)
-			GetProcAddress(hNtdll,"RtlInitUnicodeString");
-		data.fnLdrLoadDll = (pLdrLoadDll)GetProcAddress(hNtdll,"LdrLoadDll");
-		memcpy(data.DllName, lpcwDllPath, (wcslen(lpcwDllPath) + 1)*sizeof(WCHAR));
+			GetProcAddress(hNtdll, "RtlInitUnicodeString");
+		data.fnLdrLoadDll = (pLdrLoadDll)GetProcAddress(hNtdll, "LdrLoadDll");
+		memcpy(data.DllName, lpcwDllPath, (wcslen(lpcwDllPath) + 1) * sizeof(WCHAR));
 		data.DllPath = NULL;
 		data.Flags = 0;
 		data.ModuleHandle = INVALID_HANDLE_VALUE;
@@ -133,7 +140,7 @@ BOOL Cx64Inject::InjectDll(DWORD dwProcessId,LPCWSTR lpcwDllPath)
 		if (pThreadData == NULL)
 			__leave;
 		BOOL bWriteOK = WriteProcessMemory(hProcess, 
-			pThreadData,&data,sizeof(data), NULL);
+			pThreadData, &data, sizeof(data), NULL);
 		if (!bWriteOK)
 			__leave;
 		MyOutputDebugStringA("pThreadData = 0x%p", pThreadData);
